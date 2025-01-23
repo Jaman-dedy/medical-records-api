@@ -6,13 +6,15 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc",
+    "postinstall": "npm run build",
     "start:dev": "nodemon -L --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:generate": "npm run typeorm migration:generate -- -n",
-    "migration:run": "npm run typeorm migration:run",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate",
+    "migration:run": "npm run typeorm migration:run -d src/config/database.ts",
     "test": "jest",
     "lint": "eslint . --ext .ts",
-    "format": "prettier --write \"src/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "seed:all": "ts-node src/database/seeders/initial.seeder.ts"
   },
   "keywords": [],
   "author": "",
