@@ -71,11 +71,33 @@ dev: up logs-api
 restart:
 	$(DOCKER_COMPOSE) restart
 
-# Database shortcuts
-.PHONY: migrate
-migrate:
-	$(DOCKER_COMPOSE) exec api npm run migration:run
 
+# Generate migration
 .PHONY: migration-generate
 migration-generate:
-	$(DOCKER_COMPOSE) exec api npm run migration:generate
+	@read -p "Enter migration name: " name; \
+	$(DOCKER_COMPOSE) exec api npx typeorm-ts-node-commonjs migration:generate -d src/config/database.ts src/database/migrations/$$name
+
+# Run migrations
+.PHONY: migration-run
+migration-run:
+	$(DOCKER_COMPOSE) exec api npx typeorm-ts-node-commonjs migration:run -d src/config/database.ts
+
+# Revert last migration
+.PHONY: migration-revert
+migration-revert:
+	$(DOCKER_COMPOSE) exec api npx typeorm-ts-node-commonjs migration:revert -d src/config/database.ts
+
+.PHONY: migration-create
+migration-create:
+	@read -p "Enter migration name: " name; \
+	$(DOCKER_COMPOSE) exec api npm run typeorm migration:create src/database/migrations/$$name
+
+# Database commands
+.PHONY: db-drop
+db-drop:
+	$(DOCKER_COMPOSE) exec api npx typeorm-ts-node-commonjs schema:drop -d src/config/database.ts
+
+.PHONY: db-sync
+db-sync:
+	$(DOCKER_COMPOSE) exec api npm run typeorm schema:sync

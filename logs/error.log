@@ -3,3 +3,35 @@
 2025-01-22 13:13:53:1353 [31merror[39m: [31m[GET] /favicon.ico >> StatusCode:: 404, Message:: Resource not found at /favicon.ico[39m
 2025-01-22 13:15:02:152 [31merror[39m: [31m[GET] / >> StatusCode:: 404, Message:: Resource not found at /[39m
 2025-01-22 13:15:04:154 [31merror[39m: [31m[GET] / >> StatusCode:: 404, Message:: Resource not found at /[39m
+2025-01-22 17:06:13:613 [31merror[39m: [31mError checking/running seeds: relation "users" does not exist[39m
+2025-01-22 17:06:25:625 [31merror[39m: [31mError checking/running seeds: relation "users" does not exist[39m
+2025-01-22 17:07:23:723 [31merror[39m: [31mError checking/running seeds: relation "users" does not exist[39m
+2025-01-22 17:07:59:759 [31merror[39m: [31mError checking/running seeds: relation "users" does not exist[39m
+2025-01-22 17:08:08:88 [31merror[39m: [31mError checking/running seeds: relation "users" does not exist[39m
+2025-01-22 17:12:11:1211 [31merror[39m: [31mError checking/running seeds: relation "users" does not exist[39m
+2025-01-22 17:50:03:503 [31merror[39m: [31mError checking/running seeds: relation "users" does not exist[39m
+2025-01-22 18:02:38:238 [31merror[39m: [31mDatabase initialization failed: ⨯ Unable to compile TypeScript:[39m
+[31msrc/database/entities/User.ts(56,47): error TS2339: Property 'user' does not exist on type 'Patient'.[39m
+[31msrc/database/entities/User.ts(59,62): error TS2339: Property 'user' does not exist on type 'Practitioner'.[39m
+[31m[39m
+2025-01-22 18:03:18:318 [31merror[39m: [31mDatabase initialization failed: ⨯ Unable to compile TypeScript:[39m
+[31msrc/database/entities/User.ts(59,62): error TS2339: Property 'user' does not exist on type 'Practitioner'.[39m
+[31m[39m
+2025-01-22 18:03:34:334 [31merror[39m: [31mError checking/running seeds: column "userId" of relation "practitioners" does not exist[39m
+2025-01-22 18:07:47:747 [31merror[39m: [31mDatabase initialization failed: ⨯ Unable to compile TypeScript:[39m
+[31msrc/database/entities/MedicalRecord.ts(23,6): error TS2304: Cannot find name 'JoinColumn'.[39m
+[31m[39m
+2025-01-22 18:07:59:759 [31merror[39m: [31mError checking/running seeds: column "userId" of relation "practitioners" does not exist[39m
+2025-01-22 18:08:32:832 [31merror[39m: [31mError checking/running seeds: column "userId" of relation "practitioners" does not exist[39m
+2025-01-22 18:08:59:859 [31merror[39m: [31mError checking/running seeds: column "userId" of relation "practitioners" does not exist[39m
+2025-01-22 18:09:06:96 [31merror[39m: [31mError checking/running seeds: column "userId" of relation "practitioners" does not exist[39m
+2025-01-22 18:09:25:925 [31merror[39m: [31mError checking/running seeds: column "userId" of relation "practitioners" does not exist[39m
+2025-01-22 18:09:43:943 [31merror[39m: [31mError checking/running seeds: column "userId" of relation "practitioners" does not exist[39m
+2025-01-22 18:10:04:104 [31merror[39m: [31mError checking/running seeds: column "userId" of relation "practitioners" does not exist[39m
+2025-01-22 18:10:11:1011 [31merror[39m: [31mError checking/running seeds: column "userId" of relation "practitioners" does not exist[39m
+2025-01-22 18:10:29:1029 [31merror[39m: [31mError checking/running seeds: column "userId" of relation "practitioners" does not exist[39m
+2025-01-22 18:11:21:1121 [31merror[39m: [31mError checking/running seeds: column User__User_practitioner.userId does not exist[39m
+2025-01-22 18:12:00:120 [31merror[39m: [31mError checking/running seeds: column User__User_practitioner.userId does not exist[39m
+2025-01-22 18:12:25:1225 [31merror[39m: [31mError checking/running seeds: column User__User_practitioner.userId does not exist[39m
+2025-01-22 18:12:48:1248 [31merror[39m: [31mError checking/running seeds: column User__User_practitioner.userId does not exist[39m
+2025-01-23 00:41:32:4132 [31merror[39m: [31m[GET] / >> StatusCode:: 404, Message:: Resource not found at /[39m
