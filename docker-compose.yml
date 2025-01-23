@@ -8,8 +8,11 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - .:/usr/src/app
+      - ./src:/usr/src/app/src
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
       - /usr/src/app/node_modules
+      - /usr/src/app/dist
     environment:
       - NODE_ENV=development
       - PORT=3000
@@ -18,7 +21,7 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_NAME=medical_records
-      - JWT_SECRET=your_jwt_secret_key
+      - JWT_SECRET=efiche_jwt_secret_key
     depends_on:
       - postgres
     networks:
@@ -51,6 +54,7 @@ services:
 
 volumes:
   postgres_data:
+
 
 networks:
   medical-network:

@@ -1,45 +1,68 @@
+// src/config/express.ts
 import express, { Application } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import helmet from 'helmet';
-import swaggerUi from 'swagger-ui-express';
-import swaggerJSDoc from 'swagger-jsdoc';
-import { errorHandler } from '../middleware/errorHandler';
-import { notFoundHandler } from '../middleware/errorHandler';
+import compression from 'compression';
+import routes from '../routes';
+import { errorHandler, notFoundHandler } from '../middleware/errorHandler';
+import { logger } from '../utils/logger';
 
 export const createServer = (): Application => {
   const app = express();
 
-  app.use(cors());
-  app.use(helmet());
-  app.use(morgan('dev'));
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  // Essential Security Middleware
+  app.use(helmet({
+    contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false
+  }));
+  app.use(cors({
+    origin: process.env.CORS_ORIGIN || '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
 
-  const swaggerOptions = {
-    definition: {
-      openapi: '3.0.0',
-      info: {
-        title: 'Medical Records API',
-        version: '1.0.0',
-        description: 'API for managing patient medical records',
-      },
-      servers: [
-        {
-          url: `http://localhost:${process.env.PORT || 3000}`,
-        },
-      ],
+  // Compression - Important for reducing payload size
+  app.use(compression({
+    filter: (req, res) => {
+      if (req.headers['x-no-compression']) {
+        return false;
+      }
+      // Use compression for all text-based responses
+      return compression.filter(req, res);
     },
-    apis: ['./src/routes/*.ts'],
-  };
+    level: 6 // Balanced setting between compression ratio and CPU usage
+  }));
 
-  const swaggerSpec = swaggerJSDoc(swaggerOptions);
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  // Request parsing
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  app.get('/health', (_req, res) => {
-    res.status(200).json({ status: 'ok' });
+  // Logging
+  if (process.env.NODE_ENV !== 'test') {
+    app.use(morgan('dev', {
+      stream: {
+        write: (message) => logger.info(message.trim())
+      }
+    }));
+  }
+
+  // Request timeout
+  app.use((req, res, next) => {
+    req.setTimeout(30000, () => {
+      res.status(408).json({ message: 'Request Timeout' });
+    });
+    next();
   });
 
+  // Trust proxy if behind reverse proxy
+  if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+  }
+
+  // Routes
+  app.use(routes);
+
+  // Error Handling
   app.use(notFoundHandler);
   app.use(errorHandler);
 

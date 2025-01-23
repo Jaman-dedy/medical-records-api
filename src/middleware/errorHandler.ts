@@ -1,44 +1,47 @@
-import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { logger } from '../utils/logger';
 
-export class AppError extends Error {
+export class ApiError extends Error {
   constructor(
     public statusCode: number,
-    public message: string,
-    public isOperational = true
+    message: string,
+    public isOperational = true,
+    stack = ''
   ) {
     super(message);
-    Object.setPrototypeOf(this, AppError.prototype);
+    this.statusCode = statusCode;
+    this.isOperational = isOperational;
+    if (stack) {
+      this.stack = stack;
+    } else {
+      Error.captureStackTrace(this, this.constructor);
+    }
   }
 }
 
-export const errorHandler: ErrorRequestHandler = (
-  err: Error | AppError,
+export const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
+  next(new ApiError(404, `Cannot ${req.method} ${req.originalUrl}`));
+};
+
+export const errorHandler = (
+  err: ApiError,
   req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _next: NextFunction
-): void => {
-  if (err instanceof AppError) {
-    logger.error(`[${req.method}] ${req.path} >> StatusCode:: ${err.statusCode}, Message:: ${err.message}`);
-    res.status(err.statusCode).json({
-      status: 'error',
-      message: err.message,
-    });
-    return;
-  }
-
-  logger.error(`[${req.method}] ${req.path} >> StatusCode:: 500, Message:: ${err.message}`);
-  res.status(500).json({
-    status: 'error',
-    message: 'Internal server error',
-  });
-};
-
-export const notFoundHandler = (
-  req: Request,
-  _res: Response,
   next: NextFunction
-): void => {
-  next(new AppError(404, `Resource not found at ${req.path}`));
+) => {
+  const { statusCode = 500, message, isOperational = true, stack } = err;
+
+  logger.error({
+    message,
+    url: req.originalUrl,
+    method: req.method,
+    stack: process.env.NODE_ENV === 'development' ? stack : undefined
+  });
+
+  res.status(statusCode).json({
+    status: 'error',
+    message: statusCode === 500 && !isOperational ? 'Internal Server Error' : message,
+    ...(process.env.NODE_ENV === 'development' && { stack })
+  });
 };
