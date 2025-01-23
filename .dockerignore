@@ -7,3 +7,7 @@ dist
 README.md
 .docker
 docker-compose*
+# Logs
+logs/
+*.log
+npm-debug.log*
