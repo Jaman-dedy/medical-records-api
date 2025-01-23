@@ -2,7 +2,6 @@ FROM node:18-alpine
 
 WORKDIR /usr/src/app
 
-# Add bash
 RUN apk add --no-cache bash
 
 # Copy package files

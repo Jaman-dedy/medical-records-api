@@ -25,7 +25,6 @@ export const initializeDatabase = async () => {
     await AppDataSource.initialize();
     logger.info('Database connection established');
 
-    // Generate migrations if none exist
     const pendingMigrations = await AppDataSource.showMigrations();
     if (pendingMigrations) {
       logger.info('Running pending migrations...');
@@ -33,7 +32,6 @@ export const initializeDatabase = async () => {
       logger.info('Migrations completed');
     }
 
-    // Run seeds
     const { runSeeds } = await import('../database/seeders/initial.seeder');
     await runSeeds(AppDataSource);
 

@@ -36,8 +36,8 @@ export const errorHandler: ErrorRequestHandler = (
 };
 
 export const notFoundHandler = (
-  req: Request, 
-  _res: Response, 
+  req: Request,
+  _res: Response,
   next: NextFunction
 ): void => {
   next(new AppError(404, `Resource not found at ${req.path}`));

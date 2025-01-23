@@ -1,4 +1,3 @@
-// src/database/entities/index.ts
 export * from './User';
 export * from './Patient';
 export * from './Practitioner';
