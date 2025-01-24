@@ -28,6 +28,7 @@ export class PractitionerController {
     addLabResult = this.labController.addLabResult;
     updateLabResult = this.labController.updateLabResult;
     deleteLabResult = this.labController.deleteLabResult;
+    uploadLabResultFile = this.labController.uploadLabResultFile;
 
     // Prescription management
     addPrescription = this.prescriptionController.addPrescription;
@@ -35,6 +36,8 @@ export class PractitionerController {
     deletePrescription = this.prescriptionController.deletePrescription;
     getActivePrescriptions = this.prescriptionController.getActivePrescriptions;
     getPrescriptionHistory = this.prescriptionController.getPrescriptionHistory;
+    searchPatients = this.patientController.searchPatients;
+    getPatientSummary = this.patientController.getPatientSummary
 
     // Allergy management
     addAllergy = this.allergyController.addAllergy;

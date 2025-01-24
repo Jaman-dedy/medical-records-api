@@ -1,5 +1,7 @@
 // src/config/express.ts
 import express, { Application } from 'express';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './swagger';
 import cors from 'cors';
 import morgan from 'morgan';
 import helmet from 'helmet';
@@ -10,6 +12,14 @@ import { logger } from '../utils/logger';
 
 export const createServer = (): Application => {
   const app = express();
+
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+    explorer: true,
+    customCss: '.swagger-ui .topbar { display: none }',
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  }));
 
   // Essential Security Middleware
   app.use(helmet({
@@ -65,6 +75,15 @@ export const createServer = (): Application => {
   // Error Handling
   app.use(notFoundHandler);
   app.use(errorHandler);
+
+  app.use(helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  }));
 
   return app;
 };

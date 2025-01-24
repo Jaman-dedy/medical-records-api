@@ -7,6 +7,7 @@ import { MedicalRecord } from '../../database/entities/MedicalRecord';
 import { ApiError } from '../../middleware/errorHandler';
 import { AuthRequest } from '../../types/auth';
 import { BasePractitionerController } from './base';
+import { logger } from '../../utils/logger';
 
 export class LabManagementController extends BasePractitionerController {
     private labOrderRepository = AppDataSource.getRepository(LabOrder);
@@ -236,5 +237,74 @@ export class LabManagementController extends BasePractitionerController {
     private isValidStatusTransition(currentStatus: LabOrderStatus, newStatus: LabOrderStatus): boolean {
         const allowedTransitions = this.validTransitions[currentStatus];
         return allowedTransitions?.includes(newStatus) ?? false;
-    }
+    };
+
+    uploadLabResultFile = async (req: AuthRequest, res: Response): Promise<void> => {
+        try {
+            const { id } = req.params;
+            logger.debug('Starting file upload for lab result:', { id });
+
+            logger.debug('Request file object:', {
+                file: req.file,
+                body: req.body
+            });
+
+            if (!req.file) {
+                logger.warn('No file in request');
+                throw new ApiError(400, 'No file uploaded');
+            }
+
+            logger.debug('File details:', {
+                originalName: req.file.originalname,
+                path: req.file.path,
+                mimetype: req.file.mimetype,
+                size: req.file.size
+            });
+
+            const labResult = await this.labResultRepository.findOne({
+                where: { id }
+            });
+
+            if (!labResult) {
+                logger.warn(`Lab result not found: ${id}`);
+                throw new ApiError(404, 'Lab result not found');
+            }
+
+            logger.debug('Found lab result:', { labResult });
+
+            labResult.fileUrl = req.file.path;
+            await this.labResultRepository.save(labResult);
+
+            logger.debug('Successfully saved file URL to lab result');
+
+            res.status(200).json({
+                success: true,
+                data: {
+                    fileUrl: labResult.fileUrl,
+                    originalName: req.file.originalname
+                },
+                message: 'File uploaded successfully'
+            });
+        } catch (error: unknown) {
+            logger.error('Error in uploadLabResultFile:', {
+                error,
+                errorMessage: error instanceof Error ? error.message : 'Unknown error',
+                errorStack: error instanceof Error ? error.stack : undefined,
+                requestParams: req.params,
+                fileDetails: req.file
+            });
+
+            // Type guard for Cloudinary error
+            if (error && typeof error === 'object' && 'http_code' in error) {
+                logger.error('Cloudinary error:', {
+                    httpCode: (error as { http_code: number }).http_code,
+                    message: (error as { message?: string }).message || 'Unknown Cloudinary error',
+                    details: error
+                });
+            }
+
+            this.handleError(error, res, 'uploadLabResultFile');
+        }
+    };
+
 }
