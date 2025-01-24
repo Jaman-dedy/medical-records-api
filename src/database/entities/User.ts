@@ -6,11 +6,11 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   BeforeInsert,
-  OneToOne  // Add this
+  OneToOne
 } from 'typeorm';
 import { hash } from 'bcryptjs';
-import { Patient } from './Patient';  // Add this
-import { Practitioner } from './Practitioner';  // Add this
+import { Patient } from './Patient';
+import { Practitioner } from './Practitioner';
 
 export enum UserRole {
   PATIENT = 'patient',

@@ -5,8 +5,26 @@ import { Patient } from '../entities/Patient';
 import { Practitioner } from '../entities/Practitioner';
 import { logger } from '../../utils/logger';
 
+// seeds.ts
 export const runSeeds = async (dataSource: DataSource) => {
     try {
+        // Update existing users if they exist
+        const usersToUpdate = await dataSource
+            .getRepository(User)
+            .find({
+                where: [
+                    { email: 'doc1@example.com' },
+                    { email: 'patient1@example.com' }
+                ]
+            });
+
+        for (const user of usersToUpdate) {
+            user.password = await hash('pass123', 10);
+            await dataSource.manager.save(User, user);
+            logger.info(`Updated password for user ${user.email}`);
+        }
+
+        // Rest of your seeder code remains the same
         const practitionerExists = await dataSource
             .getRepository(User)
             .findOne({
@@ -37,7 +55,7 @@ export const runSeeds = async (dataSource: DataSource) => {
             .getRepository(User)
             .findOne({
                 where: { email: 'patient1@example.com' },
-                relations: ['patient']  // Check the relation
+                relations: ['patient']
             });
 
         if (!patientExists) {
